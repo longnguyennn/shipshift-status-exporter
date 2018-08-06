@@ -45,8 +45,7 @@ class JsonCollector(object):
 
 if __name__ == '__main__':
     # Usage: json_exporter.py port endpoint
-    # expose on fixed port 9100
-    start_http_server(9100)
+    start_http_server(8080)
     # direct endpoint to Shipshift on Upshift
     shipshift_endpoint = 'https://upshift.engineering.redhat.com/api/v1/namespaces/dh-stage-shipshift/pods'
     REGISTRY.register(JsonCollector(shipshift_endpoint))
