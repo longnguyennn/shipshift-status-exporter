@@ -11,7 +11,7 @@ class JsonCollector(object):
 
     def collect(self):
         # Fetch the JSON
-        token = os.getenv('token')
+        token = os.getenv('TOKEN')
         headers = { 'Accept': 'application/json',
                     'Authorization': 'Bearer {}'.format(token) }
         response = requests.get(self._endpoint,headers=headers,verify=False).json()
