@@ -18,18 +18,20 @@ class JsonCollector(object):
         pods = response['items']
 
         # Parse result and expose metrics
-        shipshift_status = 1
+        num_container = 0
+        num_container_down = 0
         for pod in pods:
             pod_name = pod['metadata']['name']
             containers = pod['status']['containerStatuses']
             # Expose status for every container in the pod
             for container in containers:
+                num_container += 1
                 state = container['state']
                 container_name = container['name']
                 if ('running' in state):
                     current_val = 1
                 else:
-                    shipshift_status = 0
+                    num_container_down += 1
                     current_val = 0
                 metric_name = '{}_{}_status'.format(pod_name,container_name)
                 metric_description = 'Current status of container {} in pod {}'.format( container_name,
@@ -39,6 +41,13 @@ class JsonCollector(object):
                 yield metric
 
         # Shipshift up/down status
+        if (num_container_down == 0):
+            shipshift_status = 1
+        elif (num_container_down == num_container):
+            shipshift_status = 0
+        else:
+            shipshift_status = 0.5
+
         metric = Metric('Shipshift_status', 'Current status of Shipshift', 'summary')
         metric.add_sample('Shipshift_status', value=shipshift_status, labels={})
         yield metric
